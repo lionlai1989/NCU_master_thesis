@@ -1,0 +1,63 @@
+// 使用 SmartRF Studio 樣板功能：    CC1100WriteRegister(CCxxx0_@RN@, 0x@vh@); // @Rd@
+
+// Chipcon
+// Product = CC1100
+// Chip version = UNKNOWN!
+// Crystal accuracy = 10 ppm
+// X-tal frequency = 26 MHz
+// RF output power = 7 dBm
+// RX filterbandwidth = 541.666667 kHz
+// Phase = 0
+// Datarate = 249.938965 kbps
+// Modulation = (7) MSK
+// Manchester enable = (0) Manchester disabled
+// RF Frequency = 432.999817 MHz
+// Channel spacing = 199.951172 kHz
+// Channel number = 0
+// Optimization = Sensitivity
+// Sync mode = (3) 30/32 sync word bits detected
+// Format of RX/TX data = (0) Normal mode, use FIFOs for RX and TX
+// CRC operation = (1) CRC calculation in TX and CRC check in RX enabled
+// Forward Error Correction = (0) FEC disabled
+// Length configuration = (1) Variable length packets, packet length configured by the first received byte after sync word.
+// Preamble count = (2)  4 bytes
+// Append status = 1
+// Address check = (0) No address check
+// FIFO autoflush = 0
+// Device address = 0
+// GDO0 signal selection = ( 6) Asserts when sync word has been sent / received, and de-asserts at the end of the packet
+// GDO2 signal selection = ( 2) 
+
+    CC1100WriteRegister(FSCTRL1, 0x06); // Frequency synthesizer control.
+    CC1100WriteRegister(FSCTRL0, 0x00); // Frequency synthesizer control.
+    CC1100WriteRegister(FREQ2, 0x10); // Frequency control word, high byte.
+    CC1100WriteRegister(FREQ1, 0xA7); // Frequency control word, middle byte.
+    CC1100WriteRegister(FREQ0, 0x62); // Frequency control word, low byte.
+    CC1100WriteRegister(MDMCFG4, 0xF6); // Modem configuration.
+    CC1100WriteRegister(MDMCFG3, 0x83); // Modem configuration.
+    CC1100WriteRegister(MDMCFG2, 0x03); // Modem configuration.
+    CC1100WriteRegister(MDMCFG1, 0x22); // Modem configuration.
+    CC1100WriteRegister(MDMCFG0, 0xF8); // Modem configuration.
+    CC1100WriteRegister(CHANNR, 0x00); // Channel number.
+    CC1100WriteRegister(DEVIATN, 0x15); // Modem deviation setting (when FSK modulation is enabled).
+    CC1100WriteRegister(FREND1, 0x56); // Front end RX configuration.
+    CC1100WriteRegister(FREND0, 0x10); // Front end RX configuration.
+    CC1100WriteRegister(MCSM0, 0x18); // Main Radio Control State Machine configuration.
+    CC1100WriteRegister(FOCCFG, 0x16); // Frequency Offset Compensation Configuration.
+    CC1100WriteRegister(BSCFG, 0x6C); // Bit synchronization Configuration.
+    CC1100WriteRegister(AGCTRL2, 0x03); // AGC control.
+    CC1100WriteRegister(AGCTRL1, 0x40); // AGC control.
+    CC1100WriteRegister(AGCTRL0, 0x91); // AGC control.
+    CC1100WriteRegister(FSCAL3, 0xE9); // Frequency synthesizer calibration.
+    CC1100WriteRegister(FSCAL2, 0x2A); // Frequency synthesizer calibration.
+    CC1100WriteRegister(FSCAL1, 0x00); // Frequency synthesizer calibration.
+    CC1100WriteRegister(FSCAL0, 0x1F); // Frequency synthesizer calibration.
+    CC1100WriteRegister(FSTEST, 0x59); // Frequency synthesizer calibration.
+    CC1100WriteRegister(TEST2, 0x81); // Various test settings.
+    CC1100WriteRegister(TEST1, 0x35); // Various test settings.
+    CC1100WriteRegister(TEST0, 0x09); // Various test settings.
+    CC1100WriteRegister(IOCFG2, 0x02); // GDO2 output pin configuration.
+    CC1100WriteRegister(IOCFG0, 0x06); // GDO0 output pin configuration. Refer to SmartRF?Studio User Manual for detailed pseudo register explanation.
+    CC1100WriteRegister(PKTCTRL1, 0x04); // Packet automation control.
+    CC1100WriteRegister(PKTCTRL0, 0x05); // Packet automation control.
+    CC1100WriteRegister(ADDR, 0x00); // Device address.

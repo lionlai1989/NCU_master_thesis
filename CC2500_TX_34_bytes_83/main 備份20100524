@@ -1,0 +1,99 @@
+#include <avr\io.h>
+#include <avr/interrupt.h>
+#include <util\delay.h>
+#include <UART&TIMER1.h>
+#include <USI.h>
+#include <CC1100.h>
+#include <CC1100Control.h>
+#include <RX&TX_Module.h>
+
+#define length 32
+
+unsigned char rxBuffer[32] = {51,50,49,48,51,50,49,48,51,50,49,48,51,50,49,48,51,50,49,48,51,50,49,48,51,50,49,48,51,50,49,48};
+unsigned char txBuffer[32] = {48,49,50,51,48,49,50,51,48,49,50,51,48,49,50,51,48,49,50,51,48,49,50,51,48,49,50,51,48,49,50,51};
+volatile unsigned char flag = 1;	// RX Mode
+	//						  0		   TX Mode
+unsigned char i=0,j=0,outtx=1,garbage;
+
+ISR( SIG_USART0_RX )
+{
+	txBuffer[j] = UDR;
+	
+	j++;
+	if( j>(length-1) )
+	{
+		j=0;
+		flag = 0;
+	}
+}
+
+int main(void)
+{
+	USI_Init();
+	USART_Init(19200);
+	CC1100Initial();
+	USART_Transmit_char_to_ASCII( 0x6f );		// boot finished.(show 111)
+	
+	CC1100WriteStrobe( SIDLE );
+	CC1100WriteStrobe( SFRX );
+	CC1100WriteStrobe( SRX );
+	
+	sei();
+	
+	while(1)
+	{
+		if(flag)
+		{
+			while( !CHKBIT(PINB, GDO0) )					// wait until RX start
+				if(flag!=1)
+					if( 0 == CC1100ReadStatus( RXBYTES ) )	// if at RX, copmlete RX before TX
+						break;
+			while(  CHKBIT(PINB, GDO0) )					// wati until RX finish
+				if(flag!=1)
+					if( 0 == CC1100ReadStatus( RXBYTES ) )	// if at RX, copmlete RX before TX
+						break;
+						
+/*				if(flag!=1)
+					if( 0 != CC1100ReadStatus( RXBYTES ) )	// if at RX, copmlete RX before TX
+				{
+					CC1100WriteStrobe( SRX );					// RX start again
+					CC1100ReadFromRXFIFO( rxBuffer , length );	// Read from the RX FIFO
+					
+					for( i=0 ; i<length ; i++ )
+						USART_Transmit( rxBuffer[i] );			// serial port output rxBuffer
+				}
+*/			
+						
+			if(flag)
+			{
+				if(outtx)
+				{
+					CC1100WriteStrobe( SRX );					// RX start again
+					CC1100ReadFromRXFIFO( rxBuffer , length );	// Read from the RX FIFO
+					
+					for( i=0 ; i<length ; i++ )
+						USART_Transmit( rxBuffer[i] );			// serial port output rxBuffer
+				}
+				outtx=1;
+			}
+		}
+			else
+			{
+				CC1100WriteStrobe( SIDLE );
+				CC1100WriteStrobe( SFTX );
+				CC1100WriteStrobe( SFSTXON );
+				CC1100WriteStrobe( STX );
+				
+				while(  CHKBIT(PINB, GDO0) ); 				// fill TX FIFO and start TX
+				CC1100WriteToTXFIFO( txBuffer , length );	// Fill up the TX FIFO
+//				CC1100WriteStrobe( STX );					// TX start again
+//				while( !CHKBIT(PINB, GDO0) );				// wait until TX start to continue
+				for( i=0 ; i<length ; i++ )
+					USART_Transmit( txBuffer[i] );			// serial port output txBuffer
+				flag = 1;
+				outtx=0;
+	
+//				CC1100WriteStrobe( SRX );
+			}
+	}
+}

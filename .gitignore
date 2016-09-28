@@ -1,0 +1,15 @@
+__pycache__/
+
+#compiled python module
+*.pyc
+
+#setuptools distribution folder
+dist/
+
+#python egg metadata, regenerated from source files by setuptools
+*.egg-info/
+
+#mac generated file
+.DS_Store
+
+py3env/**
